@@ -50,7 +50,7 @@ React Native has no single dedicated accessibility linting tool. Existing soluti
 - **Runtime-only** (can't catch issues at build time)
 - **Fragmented** (separate tools for linting, reporting, CI)
 
-This package gives you one unified tool with a CLI, ESLint plugin, GitHub Action, and programmatic API.
+<!-- This package gives you one unified tool with a CLI, ESLint plugin, GitHub Action, and programmatic API. -->
 
 ---
 
@@ -61,11 +61,11 @@ This package gives you one unified tool with a CLI, ESLint plugin, GitHub Action
 - [CLI Reference](#cli-reference)
 - [Rules](#rules)
 - [Accessibility Score](#accessibility-score)
-- [ESLint Plugin](#eslint-plugin)
-- [GitHub Action](#github-action)
-- [Programmatic API](#programmatic-api)
-- [Config File](#config-file)
-- [Writing Custom Rules](#writing-custom-rules)
+  <!-- - [ESLint Plugin](#eslint-plugin) -->
+  <!-- - [GitHub Action](#github-action) -->
+  <!-- - [Programmatic API](#programmatic-api) -->
+  <!-- - [Config File](#config-file) -->
+  <!-- - [Writing Custom Rules](#writing-custom-rules) -->
 - [Roadmap](#roadmap)
 
 ---
@@ -269,9 +269,9 @@ if (score.overall < 80) {
 
 ---
 
-## ESLint Plugin
+<!-- ## ESLint Plugin
 
-Get inline warnings while you write code.
+Get inline warnings while you write code. -->
 
 ### Setup
 
@@ -300,16 +300,16 @@ module.exports = {
 };
 ```
 
-### Import path
+<!-- ### Import path
 
 ```js
 // The ESLint plugin is a separate export
 const plugin = require("react-native-accessibility-scanner/eslint");
-```
+``` -->
 
 ---
 
-## GitHub Action
+<!-- ## GitHub Action
 
 Add to `.github/workflows/accessibility.yml` (copy from `github-action/accessibility.yml` in this repo):
 
@@ -351,9 +351,9 @@ The Action will:
 - Upload the JSON report as a build artifact
 - Fail the build if HIGH severity issues are found
 
----
+--- -->
 
-## Programmatic API
+<!-- ## Programmatic API
 
 ```ts
 import {
@@ -400,9 +400,9 @@ interface ScanOptions {
 }
 ```
 
----
+--- -->
 
-## Config File
+<!-- ## Config File
 
 Create `accessibility-scanner.config.js` in your project root:
 
@@ -426,9 +426,9 @@ The scanner automatically detects this file. You can also use:
 - `.accessibility-scannerrc.json`
 - `"accessibility-scanner"` key in `package.json`
 
----
+--- -->
 
-## Writing Custom Rules
+<!-- ## Writing Custom Rules
 
 ```ts
 import { registerRule } from "react-native-accessibility-scanner";
@@ -457,7 +457,7 @@ registerRule(new NoHideDescendantsRule());
 const report = await AccessibilityScanner.scan({ path: "./src" });
 ```
 
----
+--- -->
 
 ## Roadmap
 
@@ -478,12 +478,12 @@ const report = await AccessibilityScanner.scan({ path: "./src" });
 | v4.0 | AI-powered label suggestions | -->
 
 | Version    | Feature                                                    |
-| ---------- | ---------------------------------------------------------- |
+| ---------- | ---------------------------------------------------------- | ---------------------------------------------------- |
 | **v0.1.0** | ✅ CLI, missing-label rule, missing-role rule, JSON output |
-| v0.2.0     | Touch targets, duplicate labels, Accessibility Score       |
+| <!--       | v0.2.0                                                     | Touch targets, duplicate labels, Accessibility Score |
 | v0.3.0     | ESLint plugin, config file                                 |
 | v0.4.0     | GitHub Action, CI integration                              |
-| v1.0.0     | Stable release, full docs                                  |
+| v1.0.0     | Stable release, full docs                                  | -->                                                  |
 
 ---
 
