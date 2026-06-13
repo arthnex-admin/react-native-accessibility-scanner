@@ -477,13 +477,9 @@ const report = await AccessibilityScanner.scan({ path: "./src" });
 | v3.0 | HTML dashboard |
 | v4.0 | AI-powered label suggestions | -->
 
-| Version    | Feature                                                    |
-| ---------- | ---------------------------------------------------------- | ---------------------------------------------------- |
-| **v0.1.0** | ✅ CLI, missing-label rule, missing-role rule, JSON output |
-| <!--       | v0.2.0                                                     | Touch targets, duplicate labels, Accessibility Score |
-| v0.3.0     | ESLint plugin, config file                                 |
-| v0.4.0     | GitHub Action, CI integration                              |
-| v1.0.0     | Stable release, full docs                                  | -->                                                  |
+| Version  | Feature                                  |
+| -------- | ---------------------------------------- |
+| **v0.1** | ✅ CLI, 6 rules, JSON/Markdown reporters |
 
 ---
 
