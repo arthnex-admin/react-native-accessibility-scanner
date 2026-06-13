@@ -130,14 +130,14 @@ Options:
 
 ## Rules
 
-| Rule ID | Severity | Description |
-|---------|----------|-------------|
-| `missing-label` | 🔴 HIGH | Interactive element missing `accessibilityLabel` |
-| `touchable-without-label` | 🔴 HIGH | Touchable with no label and no `Text` child |
-| `missing-role` | 🟡 MEDIUM | Interactive element missing `accessibilityRole` |
-| `small-touch-target` | 🟡 MEDIUM | Touch target below 44×44pt recommendation |
-| `missing-hint` | 🔵 LOW | Critical action (delete/checkout/pay) missing `accessibilityHint` |
-| `duplicate-labels` | 🔵 LOW | Multiple elements share the same `accessibilityLabel` |
+| Rule ID                   | Severity  | Description                                                       |
+| ------------------------- | --------- | ----------------------------------------------------------------- |
+| `missing-label`           | 🔴 HIGH   | Interactive element missing `accessibilityLabel`                  |
+| `touchable-without-label` | 🔴 HIGH   | Touchable with no label and no `Text` child                       |
+| `missing-role`            | 🟡 MEDIUM | Interactive element missing `accessibilityRole`                   |
+| `small-touch-target`      | 🟡 MEDIUM | Touch target below 44×44pt recommendation                         |
+| `missing-hint`            | 🔵 LOW    | Critical action (delete/checkout/pay) missing `accessibilityHint` |
+| `duplicate-labels`        | 🔵 LOW    | Multiple elements share the same `accessibilityLabel`             |
 
 ### Rule Details
 
@@ -249,6 +249,7 @@ npx react-native-accessibility-scan ./src --score
 ```
 
 **Scoring model:**
+
 - HIGH issue: −20 points per issue
 - MEDIUM issue: −8 points per issue
 - LOW issue: −3 points per issue
@@ -344,6 +345,7 @@ jobs:
 ```
 
 The Action will:
+
 - Run on every push and pull request
 - Post a Markdown summary as a PR comment
 - Upload the JSON report as a build artifact
@@ -354,7 +356,11 @@ The Action will:
 ## Programmatic API
 
 ```ts
-import { AccessibilityScanner, computeScore, ConsoleReporter } from "react-native-accessibility-scanner";
+import {
+  AccessibilityScanner,
+  computeScore,
+  ConsoleReporter,
+} from "react-native-accessibility-scanner";
 
 const report = await AccessibilityScanner.scan({
   path: "./src",
@@ -372,7 +378,9 @@ console.log(score.overall); // 72
 
 // Access issues directly
 report.issues.forEach((issue) => {
-  console.log(`${issue.severity}: ${issue.message} (${issue.file}:${issue.line})`);
+  console.log(
+    `${issue.severity}: ${issue.message} (${issue.file}:${issue.line})`,
+  );
 });
 ```
 
@@ -380,15 +388,15 @@ report.issues.forEach((issue) => {
 
 ```ts
 interface ScanOptions {
-  path?: string | string[];         // default: "./src"
-  ignore?: string[];                // glob patterns
-  failOnHigh?: boolean;             // default: false
-  failOnMedium?: boolean;           // default: false
+  path?: string | string[]; // default: "./src"
+  ignore?: string[]; // glob patterns
+  failOnHigh?: boolean; // default: false
+  failOnMedium?: boolean; // default: false
   touchTarget?: {
-    minWidth?: number;              // default: 44
-    minHeight?: number;             // default: 44
+    minWidth?: number; // default: 44
+    minHeight?: number; // default: 44
   };
-  disabledRules?: string[];         // rule IDs to skip
+  disabledRules?: string[]; // rule IDs to skip
 }
 ```
 
@@ -413,6 +421,7 @@ module.exports = {
 ```
 
 The scanner automatically detects this file. You can also use:
+
 - `.accessibility-scannerrc`
 - `.accessibility-scannerrc.json`
 - `"accessibility-scanner"` key in `package.json`
@@ -423,7 +432,11 @@ The scanner automatically detects this file. You can also use:
 
 ```ts
 import { registerRule } from "react-native-accessibility-scanner";
-import type { AccessibilityRule, AccessibilityIssue, RuleContext } from "react-native-accessibility-scanner";
+import type {
+  AccessibilityRule,
+  AccessibilityIssue,
+  RuleContext,
+} from "react-native-accessibility-scanner";
 import * as t from "@babel/types";
 
 class NoHideDescendantsRule implements AccessibilityRule {
@@ -448,7 +461,7 @@ const report = await AccessibilityScanner.scan({ path: "./src" });
 
 ## Roadmap
 
-| Version | Feature |
+<!-- | Version | Feature |
 |---------|---------|
 | **v0.1** | ✅ CLI, 6 rules, JSON/Markdown reporters |
 | **v0.2** | Touch target detection, duplicate labels, score |
@@ -462,7 +475,15 @@ const report = await AccessibilityScanner.scan({ path: "./src" });
 | v1.5 | FlatList / SectionList rules |
 | v2.0 | VS Code extension |
 | v3.0 | HTML dashboard |
-| v4.0 | AI-powered label suggestions |
+| v4.0 | AI-powered label suggestions | -->
+
+| Version    | Feature                                                    |
+| ---------- | ---------------------------------------------------------- |
+| **v0.1.0** | ✅ CLI, missing-label rule, missing-role rule, JSON output |
+| v0.2.0     | Touch targets, duplicate labels, Accessibility Score       |
+| v0.3.0     | ESLint plugin, config file                                 |
+| v0.4.0     | GitHub Action, CI integration                              |
+| v1.0.0     | Stable release, full docs                                  |
 
 ---
 
@@ -481,4 +502,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 ## License
 
-MIT © [Your Name](https://github.com/YOUR_USERNAME)
+MIT © [Arthnex](https://github.com/arthnex-admin)
