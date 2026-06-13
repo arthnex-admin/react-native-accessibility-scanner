@@ -1,6 +1,6 @@
 {
   "name": "react-native-accessibility-scanner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Accessibility auditing for React Native apps — CLI, ESLint plugin, GitHub Action, and programmatic API.",
   "keywords": [
     "react-native",
