@@ -1,0 +1,10 @@
+src/
+tests/
+examples/
+github-action/
+coverage/
+*.log
+.DS_Store
+tsconfig.json
+vitest.config.ts
+PUBLISHING_GUIDE.txt

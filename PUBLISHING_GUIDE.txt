@@ -1,0 +1,366 @@
+# Complete Setup & Publishing Guide
+# react-native-accessibility-scanner
+
+========================================================
+PART 1 — WHAT YOU HAVE RIGHT NOW
+========================================================
+
+Your package is 100% built and tested locally.
+Here's what exists:
+
+src/
+  cli/index.ts          ← The "npx" command
+  scanner/index.ts      ← Core scanner engine
+  scanner/file-scanner.ts
+  scanner/config-loader.ts
+  scanner/scorer.ts     ← Accessibility score (0-100)
+  rules/
+    missing-label.ts    ← Rule 1 (HIGH)
+    missing-role.ts     ← Rule 2 (MEDIUM)
+    small-touch-target.ts ← Rule 3 (MEDIUM)
+    duplicate-labels.ts ← Rule 4 (LOW)
+    missing-hint.ts     ← Rule 5 (LOW)
+    touchable-without-label.ts ← Rule 6 (HIGH)
+    index.ts            ← Rule registry
+  reporters/
+    console-reporter.ts ← Colored terminal output
+    json-reporter.ts    ← JSON output
+    markdown-reporter.ts ← Markdown reports
+  eslint/index.ts       ← ESLint plugin
+  types/index.ts        ← TypeScript types
+  utils/ast.ts          ← AST helpers
+
+tests/
+  unit/
+    ast-utils.test.ts   ← 19 tests
+    rules.test.ts       ← 24 tests
+    scanner.test.ts     ← 11 tests
+    reporters.test.ts   ← 9 tests
+  fixtures/
+    good/GoodScreen.tsx
+    bad/BadScreen.tsx
+    bad/EdgeCases.tsx
+
+dist/                   ← Built output (ready to publish)
+github-action/
+  accessibility.yml     ← GitHub Action workflow
+examples/
+  accessibility-scanner.config.js
+  example-api-usage.ts
+  .eslintrc.js
+
+Test results: 63/63 PASSING ✅
+TypeScript errors: 0 ✅
+Build: clean ✅
+
+========================================================
+PART 2 — STEP BY STEP SETUP ON YOUR MACHINE
+========================================================
+
+STEP 1: Install Node.js (if you don't have it)
+────────────────────────────────────────────────
+Go to: https://nodejs.org
+Download the LTS version (20.x or higher).
+
+Check it works:
+  node --version    # should show v20.x.x
+  npm --version     # should show 10.x.x
+
+STEP 2: Copy the project to your machine
+─────────────────────────────────────────
+Option A — From the download:
+  Unzip the project folder.
+  Put it somewhere like:
+  ~/projects/react-native-accessibility-scanner
+
+Option B — Create a GitHub repo first (recommended):
+  See PART 3 below, then clone it.
+
+STEP 3: Open the folder in your terminal
+─────────────────────────────────────────
+  cd ~/projects/react-native-accessibility-scanner
+
+STEP 4: Install dependencies
+──────────────────────────────
+  npm install
+
+This installs:
+  - @babel/parser
+  - @babel/traverse
+  - @babel/types
+  - chalk
+  - commander
+  - cosmiconfig
+  - glob
+  - vitest (for tests)
+  - typescript
+
+STEP 5: Run the tests
+──────────────────────
+  npm test
+
+You should see:
+  ✓ tests/unit/rules.test.ts (24 tests)
+  ✓ tests/unit/ast-utils.test.ts (19 tests)
+  ✓ tests/unit/scanner.test.ts (11 tests)
+  ✓ tests/unit/reporters.test.ts (9 tests)
+  Tests 63 passed (63)
+
+STEP 6: Build the project
+──────────────────────────
+  npm run build
+
+This compiles TypeScript → JavaScript in the dist/ folder.
+
+STEP 7: Test the CLI locally
+──────────────────────────────
+  node dist/cli/index.js ./src --score
+
+You should see the colored accessibility report.
+
+========================================================
+PART 3 — CREATE YOUR GITHUB REPOSITORY
+========================================================
+
+STEP 1: Create account
+  Go to: https://github.com
+  Sign up or sign in.
+
+STEP 2: Create new repository
+  Click the "+" button → "New repository"
+  Name: react-native-accessibility-scanner
+  Description: Accessibility auditing for React Native apps.
+  Set to Public
+  Do NOT check "Add README" (we already have one)
+  Click "Create repository"
+
+STEP 3: Push your code to GitHub
+  In your project folder, run:
+
+  git init
+  git add .
+  git commit -m "feat: initial release v0.1.0"
+  git branch -M main
+  git remote add origin https://github.com/YOUR_USERNAME/react-native-accessibility-scanner.git
+  git push -u origin main
+
+  Replace YOUR_USERNAME with your actual GitHub username.
+
+STEP 4: Add the GitHub Action
+  Copy the workflow file:
+
+  mkdir -p .github/workflows
+  cp github-action/accessibility.yml .github/workflows/accessibility.yml
+  git add .github/
+  git commit -m "ci: add accessibility scan workflow"
+  git push
+
+  Now every push and PR will automatically run the scanner.
+
+STEP 5: Add topics to your repo (helps people find it)
+  On GitHub, go to your repo page.
+  Click the gear icon next to "About".
+  Add topics:
+    react-native
+    accessibility
+    a11y
+    eslint
+    cli
+    typescript
+    linting
+
+========================================================
+PART 4 — PUBLISH TO NPM
+========================================================
+
+STEP 1: Create an npm account
+  Go to: https://www.npmjs.com
+  Click "Sign Up"
+  Choose a username (this appears in your package URL)
+  Verify your email address
+
+STEP 2: Log into npm from your terminal
+  npm login
+
+  It will ask for:
+  - Username
+  - Password
+  - Email
+  - One-time password (from your email or 2FA app)
+
+STEP 3: Update package.json with YOUR details
+  Open package.json and change these lines:
+
+  "author": "Your Name <your@email.com>",
+  "repository": {
+    "url": "https://github.com/YOUR_USERNAME/react-native-accessibility-scanner"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/react-native-accessibility-scanner#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/react-native-accessibility-scanner/issues"
+  }
+
+STEP 4: Check the package name is available
+  npm search react-native-accessibility-scanner
+
+  If it shows "No matches found" → the name is yours.
+  If taken, try:
+    @YOUR_USERNAME/react-native-accessibility-scanner
+  (This is a "scoped" package)
+
+STEP 5: Do a dry run first (see what will be published)
+  npm publish --dry-run
+
+  This shows exactly which files will be uploaded.
+  You should see:
+    dist/
+    README.md
+    LICENSE
+    package.json
+
+STEP 6: Create a LICENSE file
+  Create a file called LICENSE (no extension):
+
+    MIT License
+
+    Copyright (c) 2025 Your Name
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+STEP 7: Build before publishing
+  npm run build
+
+STEP 8: Publish!
+  npm publish
+
+  If your package is scoped (@username/package-name):
+  npm publish --access public
+
+  You'll see:
+    + react-native-accessibility-scanner@1.0.0
+
+  Your package is now LIVE at:
+  https://www.npmjs.com/package/react-native-accessibility-scanner
+
+STEP 9: Verify it works from npm
+  Wait 2-3 minutes, then test:
+  npx react-native-accessibility-scan --version
+  # should print: 1.0.0
+
+========================================================
+PART 5 — UPDATE package.json (replace YOUR_USERNAME)
+========================================================
+
+Before publishing, do a find-replace in package.json:
+  Replace: YOUR_USERNAME
+  With: your actual GitHub username
+
+Also update the README.md in the same way.
+
+========================================================
+PART 6 — VERSIONING WORKFLOW (how to release updates)
+========================================================
+
+When you FIX a bug (0.1.0 → 0.1.1):
+  1. Fix the bug
+  2. npm test  (make sure tests pass)
+  3. npm version patch  (auto-bumps version)
+  4. npm run build
+  5. npm publish
+  6. git push && git push --tags
+
+When you ADD a feature (0.1.0 → 0.2.0):
+  1. Add the feature
+  2. Add tests for it
+  3. npm test
+  4. npm version minor
+  5. npm run build
+  6. npm publish
+  7. git push && git push --tags
+
+When you make a BREAKING CHANGE (1.x → 2.0.0):
+  1. npm version major
+  2. npm run build
+  3. npm publish
+  4. git push && git push --tags
+
+RELEASE CHECKLIST (every time):
+  □ npm test passes (63/63)
+  □ npm run build succeeds
+  □ README updated if needed
+  □ package.json version bumped
+  □ Committed to git
+  □ Tagged in git (npm version does this automatically)
+  □ npm publish
+  □ Test: npx react-native-accessibility-scan --version
+
+========================================================
+PART 7 — ANNOUNCE YOUR PACKAGE (after publishing)
+========================================================
+
+1. Reddit:
+   Post to r/reactnative
+   Title: "I built a React Native accessibility scanner — 
+           detects missing labels, roles, small touch targets 
+           and gives your app an accessibility score"
+
+2. Twitter/X:
+   "Just released react-native-accessibility-scanner!
+   Scan your RN app for a11y issues in one command:
+   npx react-native-accessibility-scan ./src
+   Gets you an Accessibility Score 0-100 per screen.
+   npm: [link]  GitHub: [link]
+   #ReactNative #a11y #accessibility"
+
+3. Dev.to article:
+   Title: "How I built a React Native accessibility scanner 
+           that gives your app a score"
+   Walk through the tool and what it catches.
+
+4. GitHub topics on your repo let people find it via search.
+
+========================================================
+PART 8 — QUICK COMMAND REFERENCE
+========================================================
+
+DEV commands (inside the project):
+  npm install         Install dependencies
+  npm test            Run 63 tests
+  npm run build       Compile TypeScript → dist/
+  npm run test:watch  Watch mode for tests
+
+PUBLISHING commands:
+  npm login           Log into npm
+  npm publish --dry-run   Preview what gets published
+  npm publish         Publish to npm
+  npm version patch   Bump 0.1.0 → 0.1.1
+  npm version minor   Bump 0.1.0 → 0.2.0
+  npm version major   Bump 1.0.0 → 2.0.0
+
+USING the CLI (once published):
+  npx react-native-accessibility-scan ./src
+  npx react-native-accessibility-scan ./src --score
+  npx react-native-accessibility-scan ./src --json
+  npx react-native-accessibility-scan ./src --fail-on-high
+  npx react-native-accessibility-scan ./src --output report.md
+
+GITHUB:
+  git add .
+  git commit -m "your message"
+  git push

@@ -1,0 +1,80 @@
+name: Accessibility Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  accessibility:
+    name: React Native Accessibility Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Run accessibility scan ─────────────────────────────────────────────
+      - name: Run Accessibility Scanner
+        id: scan
+        run: |
+          npx react-native-accessibility-scan ./src \
+            --fail-on-high \
+            --output accessibility-report.json
+        continue-on-error: true   # We handle exit codes below
+
+      # ── Upload JSON report as artifact ────────────────────────────────────
+      - name: Upload Accessibility Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-report
+          path: accessibility-report.json
+          retention-days: 30
+
+      # ── Generate Markdown report and post as PR comment ───────────────────
+      - name: Generate Markdown Report
+        if: always()
+        run: |
+          npx react-native-accessibility-scan ./src --markdown > accessibility-report.md || true
+
+      - name: Post PR Comment
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = '';
+            try {
+              body = fs.readFileSync('accessibility-report.md', 'utf8');
+            } catch {
+              body = '⚠️ Could not read accessibility report.';
+            }
+            // Truncate if too long for a PR comment
+            if (body.length > 65000) {
+              body = body.slice(0, 65000) + '\n\n_...truncated. Download the full report from Actions artifacts._';
+            }
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ♿ Accessibility Scan Results\n\n${body}`,
+            });
+
+      # ── Fail the job if scanner found high severity issues ─────────────────
+      - name: Check scan result
+        if: steps.scan.outcome == 'failure'
+        run: |
+          echo "::error::Accessibility scan failed — HIGH severity issues detected."
+          echo "::error::Download the accessibility-report artifact for details."
+          exit 1
