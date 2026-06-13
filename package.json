@@ -57,9 +57,9 @@
     "node": ">=16.0.0"
   },
   "repository": {
-    "type": "git",
-    "url": "https://github.com/arthnex-admin/react-native-accessibility-scanner"
-  },
+  "type": "git",
+  "url": "git+https://github.com/arthnex-admin/react-native-accessibility-scanner.git"
+},
   "bugs": {
     "url": "https://github.com/arthnex-admin/react-native-accessibility-scanner/issues"
   },
