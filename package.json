@@ -1,6 +1,6 @@
 {
   "name": "react-native-accessibility-scanner",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Accessibility auditing for React Native apps — CLI, ESLint plugin, GitHub Action, and programmatic API.",
   "keywords": [
     "react-native",
@@ -57,9 +57,9 @@
     "node": ">=16.0.0"
   },
   "repository": {
-  "type": "git",
-  "url": "git+https://github.com/arthnex-admin/react-native-accessibility-scanner.git"
-},
+    "type": "git",
+    "url": "git+https://github.com/arthnex-admin/react-native-accessibility-scanner.git"
+  },
   "bugs": {
     "url": "https://github.com/arthnex-admin/react-native-accessibility-scanner/issues"
   },
