@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name("react-native-accessibility-scan")
   .description("Accessibility auditing for React Native apps.")
-  .version("0.1.0")
+  .version("0.1.1")
   .argument("[path]", "Path to scan (default: ./src)", "./src")
   .option("--json", "Output results as JSON to stdout")
   .option("--markdown", "Output results as Markdown to stdout")
