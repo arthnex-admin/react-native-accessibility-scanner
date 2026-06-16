@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name("react-native-accessibility-scan")
   .description("Accessibility auditing for React Native apps.")
-  .version("0.1.0")
+  .version("0.1.3")
   .argument("[path]", "Path to scan (default: ./src)", "./src")
   .option("--json", "Output results as JSON to stdout")
   .option("--markdown", "Output results as Markdown to stdout")
@@ -103,6 +103,7 @@ function printScore(score: ReturnType<typeof computeScore>) {
   console.log(`   Roles         ${scoreEmoji(score.breakdown.roles)} ${score.breakdown.roles}/100`);
   console.log(`   Touch Targets ${scoreEmoji(score.breakdown.touchTargets)} ${score.breakdown.touchTargets}/100`);
   console.log(`   Hints         ${scoreEmoji(score.breakdown.hints)} ${score.breakdown.hints}/100`);
+  console.log(`   States        ${scoreEmoji(score.breakdown.states)} ${score.breakdown.states}/100`);
 
   if (score.screens.length > 1) {
     console.log(chalk.bold("\n📱 Screen Scores\n"));

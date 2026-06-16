@@ -5,6 +5,7 @@ import { SmallTouchTargetRule } from "./small-touch-target";
 import { DuplicateLabelsRule } from "./duplicate-labels";
 import { MissingHintRule } from "./missing-hint";
 import { TouchableWithoutLabelRule } from "./touchable-without-label";
+import { MissingAccessibilityStateRule } from "./missing-accessibility-state";
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
@@ -32,6 +33,7 @@ registerRule(new SmallTouchTargetRule());
 registerRule(duplicateLabelsRule);
 registerRule(new MissingHintRule());
 registerRule(new TouchableWithoutLabelRule());
+registerRule(new MissingAccessibilityStateRule());
 
 export {
   MissingLabelRule,
@@ -40,4 +42,5 @@ export {
   DuplicateLabelsRule,
   MissingHintRule,
   TouchableWithoutLabelRule,
+  MissingAccessibilityStateRule,
 };

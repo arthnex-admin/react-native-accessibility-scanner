@@ -23,11 +23,12 @@ export interface AccessibilityScore {
   overall: number;
   screens: ScreenScore[];
   /** Breakdown by category (rule dimension) */
-  breakdown: {
+breakdown: {
     labels: number;
     roles: number;
     touchTargets: number;
     hints: number;
+    states: number;
   };
 }
 
@@ -74,16 +75,18 @@ export function computeScore(report: ScanReport): AccessibilityScore {
       : clamp(screens.reduce((sum, s) => sum + s.score, 0) / screens.length);
 
   // Category breakdown — penalise each category independently
-  const labelIssues = issues.filter((i) => ["missing-label", "touchable-without-label"].includes(i.ruleId)).length;
+const labelIssues = issues.filter((i) => ["missing-label", "touchable-without-label"].includes(i.ruleId)).length;
   const roleIssues = issues.filter((i) => i.ruleId === "missing-role").length;
   const touchIssues = issues.filter((i) => i.ruleId === "small-touch-target").length;
   const hintIssues = issues.filter((i) => ["missing-hint", "duplicate-labels"].includes(i.ruleId)).length;
+  const stateIssues = issues.filter((i) => i.ruleId === "missing-accessibility-state").length;
 
   const breakdown = {
     labels: clamp(100 - labelIssues * SEVERITY_PENALTY.high),
     roles: clamp(100 - roleIssues * SEVERITY_PENALTY.medium),
     touchTargets: clamp(100 - touchIssues * SEVERITY_PENALTY.medium),
     hints: clamp(100 - hintIssues * SEVERITY_PENALTY.low),
+    states: clamp(100 - stateIssues * SEVERITY_PENALTY.medium),
   };
 
   return { overall, screens, breakdown };

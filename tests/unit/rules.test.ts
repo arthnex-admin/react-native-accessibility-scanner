@@ -8,6 +8,7 @@ import { SmallTouchTargetRule } from "../../src/rules/small-touch-target";
 import { DuplicateLabelsRule } from "../../src/rules/duplicate-labels";
 import { MissingHintRule } from "../../src/rules/missing-hint";
 import { TouchableWithoutLabelRule } from "../../src/rules/touchable-without-label";
+import { MissingAccessibilityStateRule } from "../../src/rules/missing-accessibility-state";
 import type { RuleContext, AccessibilityIssue } from "../../src/types";
 import { DEFAULT_CONFIG } from "../../src/types";
 
@@ -275,5 +276,80 @@ describe("TouchableWithoutLabelRule", () => {
       rule.run.bind(rule)
     );
     expect(issues).toHaveLength(0);
+  });
+});
+
+// ─── MissingAccessibilityStateRule ───────────────────────────────────────────
+
+describe("MissingAccessibilityStateRule", () => {
+  const rule = new MissingAccessibilityStateRule();
+
+  it("flags disabled prop without accessibilityState", () => {
+    const issues = runRuleOnCode(
+      '<TouchableOpacity accessibilityLabel="Submit" accessibilityRole="button" disabled={true} onPress={() => {}} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0].severity).toBe("medium");
+    expect(issues[0].message).toContain("disabled");
+    expect(issues[0].ruleId).toBe("missing-accessibility-state");
+  });
+
+  it("flags selected prop without accessibilityState", () => {
+    const issues = runRuleOnCode(
+      '<TouchableOpacity accessibilityLabel="Tab" accessibilityRole="button" selected={true} onPress={() => {}} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain("selected");
+  });
+
+  it("does NOT flag when accessibilityState has disabled key", () => {
+    const issues = runRuleOnCode(
+      '<TouchableOpacity accessibilityLabel="Submit" disabled={true} accessibilityState={{ disabled: true }} onPress={() => {}} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(0);
+  });
+
+  it("does NOT flag when accessibilityState is a dynamic variable", () => {
+    const issues = runRuleOnCode(
+      '<TouchableOpacity accessibilityLabel="Submit" disabled={true} accessibilityState={a11yState} onPress={() => {}} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(0);
+  });
+
+  it("does NOT flag when disabled prop is absent", () => {
+    const issues = runRuleOnCode(
+      '<TouchableOpacity accessibilityLabel="Submit" accessibilityRole="button" onPress={() => {}} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(0);
+  });
+
+  it("does NOT flag non-interactive components like View", () => {
+    const issues = runRuleOnCode(
+      "<View disabled={true} />",
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(0);
+  });
+
+  it("flags Pressable with disabled but no accessibilityState", () => {
+    const issues = runRuleOnCode(
+      '<Pressable accessibilityLabel="Pay" disabled={isLoading} onPress={() => {}} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(1);
+  });
+
+  it("suggestion includes correct fix example", () => {
+    const issues = runRuleOnCode(
+      '<TouchableOpacity accessibilityLabel="Submit" disabled={true} onPress={() => {}} />',
+      rule.run.bind(rule)
+    );
+    expect(issues[0].suggestion).toContain("accessibilityState");
+    expect(issues[0].suggestion).toContain("disabled");
   });
 });

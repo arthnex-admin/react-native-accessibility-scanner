@@ -19,6 +19,7 @@ export {
   DuplicateLabelsRule,
   MissingHintRule,
   TouchableWithoutLabelRule,
+  MissingAccessibilityStateRule,
 } from "./rules";
 
 // Types

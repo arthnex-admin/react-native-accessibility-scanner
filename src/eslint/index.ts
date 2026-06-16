@@ -9,6 +9,7 @@ import {
   INTERACTIVE_COMPONENTS,
   TOUCHABLE_COMPONENTS,
   extractStyleDimension,
+  findAttribute,
 } from "../utils/ast";
 import * as t from "@babel/types";
 
@@ -144,14 +145,80 @@ const smallTouchTargetRule: RuleModule = {
   },
 };
 
+// ─── Rule: missing-accessibility-state ───────────────────────────────────────
+
+const STATE_PROPS = [
+  { jsProp: "disabled", a11yStateKey: "disabled" },
+  { jsProp: "selected", a11yStateKey: "selected" },
+];
+
+function accessibilityStateHasKey(node: ESLintNode, key: string): boolean {
+  const bNode = toBabelNode(node);
+  if (!t.isJSXElement(bNode)) return false;
+  const attr = findAttribute(bNode.openingElement, "accessibilityState");
+  if (!attr || !attr.value) return false;
+  if (
+    t.isJSXExpressionContainer(attr.value) &&
+    t.isObjectExpression(attr.value.expression)
+  ) {
+    return attr.value.expression.properties.some(
+      (p) =>
+        t.isObjectProperty(p) &&
+        ((t.isIdentifier(p.key) && p.key.name === key) ||
+          (t.isStringLiteral(p.key) && p.key.value === key))
+    );
+  }
+  if (t.isJSXExpressionContainer(attr.value)) return true;
+  return false;
+}
+
+const missingAccessibilityStateRule: RuleModule = {
+  meta: {
+    type: "suggestion",
+    docs: {
+      description:
+        "Elements with `disabled` or `selected` props must expose them via `accessibilityState` for screen readers.",
+      recommended: true,
+      url: "https://github.com/arthnex-admin/react-native-accessibility-scanner#missing-accessibility-state",
+    },
+    schema: [],
+    messages: {
+      missingState:
+        "<{{name}}> has `{{prop}}` prop but no `accessibilityState={{ {{key}}: ... }}`. Screen readers won't announce this state. Add accessibilityState={{ {{key}}: {{prop}} }}.",
+    },
+  },
+  create(context) {
+    return {
+      JSXElement(node) {
+        const bNode = toBabelNode(node);
+        if (!t.isJSXElement(bNode)) return;
+        const opening = bNode.openingElement;
+        const name = getComponentName(opening);
+        if (!name || !INTERACTIVE_COMPONENTS.has(name)) return;
+
+        for (const { jsProp, a11yStateKey } of STATE_PROPS) {
+          if (!hasNonEmptyAttribute(opening, jsProp)) continue;
+          if (accessibilityStateHasKey(node, a11yStateKey)) continue;
+          context.report({
+            node,
+            messageId: "missingState",
+            data: { name, prop: jsProp, key: a11yStateKey },
+          });
+        }
+      },
+    };
+  },
+};
+
 // ─── Plugin export ────────────────────────────────────────────────────────────
 
 const plugin = {
-  meta: { name: "react-native-accessibility-scanner", version: "1.0.0" },
+  meta: { name: "react-native-accessibility-scanner", version: "0.2.0" },
   rules: {
     "missing-label": missingLabelRule,
     "missing-role": missingRoleRule,
     "small-touch-target": smallTouchTargetRule,
+    "missing-accessibility-state": missingAccessibilityStateRule,
   },
   configs: {
     recommended: {
@@ -160,10 +227,16 @@ const plugin = {
         "react-native-accessibility-scanner/missing-label": "error",
         "react-native-accessibility-scanner/missing-role": "warn",
         "react-native-accessibility-scanner/small-touch-target": "warn",
+        "react-native-accessibility-scanner/missing-accessibility-state": "warn",
       },
     },
   },
 };
 
 export default plugin;
-export { missingLabelRule, missingRoleRule, smallTouchTargetRule };
+export {
+  missingLabelRule,
+  missingRoleRule,
+  smallTouchTargetRule,
+  missingAccessibilityStateRule,
+};
