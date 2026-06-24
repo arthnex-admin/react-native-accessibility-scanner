@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Pressable } from 'react-native';
 
+// ❌ Elements that use disabled/selected but don't expose via accessibilityState
+
 export function BadStateScreen() {
-  const [isLoading] = useState(false);
-  const [isSelected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
 
   return (
     <View>
-      {/* ❌ disabled but no accessibilityState */}
+      {/* ❌ disabled prop present but no accessibilityState */}
       <TouchableOpacity
         accessibilityLabel="Submit payment"
         accessibilityRole="button"
@@ -15,7 +17,7 @@ export function BadStateScreen() {
         onPress={() => {}}
       />
 
-      {/* ❌ selected but no accessibilityState */}
+      {/* ❌ selected prop present but no accessibilityState */}
       <TouchableOpacity
         accessibilityLabel="Photos tab"
         accessibilityRole="button"
@@ -23,7 +25,7 @@ export function BadStateScreen() {
         onPress={() => {}}
       />
 
-      {/* ❌ Pressable with disabled, missing accessibilityState */}
+      {/* ❌ Pressable with disabled but missing accessibilityState */}
       <Pressable
         accessibilityLabel="Checkout"
         accessibilityRole="button"

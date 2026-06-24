@@ -11,7 +11,7 @@ export { ConsoleReporter } from "./reporters/console-reporter";
 export { JsonReporter } from "./reporters/json-reporter";
 export { MarkdownReporter } from "./reporters/markdown-reporter";
 
-// Built-in rule classes (for extension / custom configs)
+// Built-in rule classes
 export {
   MissingLabelRule,
   MissingRoleRule,
@@ -20,6 +20,7 @@ export {
   MissingHintRule,
   TouchableWithoutLabelRule,
   MissingAccessibilityStateRule,
+  FlatListAccessibilityRule,
 } from "./rules";
 
 // Types

@@ -6,6 +6,7 @@ import { DuplicateLabelsRule } from "./duplicate-labels";
 import { MissingHintRule } from "./missing-hint";
 import { TouchableWithoutLabelRule } from "./touchable-without-label";
 import { MissingAccessibilityStateRule } from "./missing-accessibility-state";
+import { FlatListAccessibilityRule } from "./flatlist-accessibility";
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
@@ -34,6 +35,7 @@ registerRule(duplicateLabelsRule);
 registerRule(new MissingHintRule());
 registerRule(new TouchableWithoutLabelRule());
 registerRule(new MissingAccessibilityStateRule());
+registerRule(new FlatListAccessibilityRule());
 
 export {
   MissingLabelRule,
@@ -43,4 +45,5 @@ export {
   MissingHintRule,
   TouchableWithoutLabelRule,
   MissingAccessibilityStateRule,
+  FlatListAccessibilityRule,
 };

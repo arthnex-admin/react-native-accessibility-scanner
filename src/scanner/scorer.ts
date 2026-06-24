@@ -10,7 +10,6 @@ const SEVERITY_PENALTY: Record<Severity, number> = {
 
 export interface ScreenScore {
   file: string;
-  /** Short filename for display (e.g. HomeScreen.tsx) */
   displayName: string;
   score: number;
   issueCount: number;
@@ -22,13 +21,13 @@ export interface ScreenScore {
 export interface AccessibilityScore {
   overall: number;
   screens: ScreenScore[];
-  /** Breakdown by category (rule dimension) */
-breakdown: {
+  breakdown: {
     labels: number;
     roles: number;
     touchTargets: number;
     hints: number;
     states: number;
+    lists: number;
   };
 }
 
@@ -65,21 +64,19 @@ export function scoreFile(result: FileScanResult): ScreenScore {
 export function computeScore(report: ScanReport): AccessibilityScore {
   const { results, issues } = report;
 
-  // Per-screen scores (only files that had issues, plus all files)
   const screens = results.map(scoreFile);
 
-  // Overall = average of all screen scores (files with no issues score 100)
   const overall =
     screens.length === 0
       ? 100
       : clamp(screens.reduce((sum, s) => sum + s.score, 0) / screens.length);
 
-  // Category breakdown — penalise each category independently
-const labelIssues = issues.filter((i) => ["missing-label", "touchable-without-label"].includes(i.ruleId)).length;
+  const labelIssues = issues.filter((i) => ["missing-label", "touchable-without-label"].includes(i.ruleId)).length;
   const roleIssues = issues.filter((i) => i.ruleId === "missing-role").length;
   const touchIssues = issues.filter((i) => i.ruleId === "small-touch-target").length;
   const hintIssues = issues.filter((i) => ["missing-hint", "duplicate-labels"].includes(i.ruleId)).length;
   const stateIssues = issues.filter((i) => i.ruleId === "missing-accessibility-state").length;
+  const listIssues = issues.filter((i) => i.ruleId === "flatlist-missing-accessibility").length;
 
   const breakdown = {
     labels: clamp(100 - labelIssues * SEVERITY_PENALTY.high),
@@ -87,6 +84,7 @@ const labelIssues = issues.filter((i) => ["missing-label", "touchable-without-la
     touchTargets: clamp(100 - touchIssues * SEVERITY_PENALTY.medium),
     hints: clamp(100 - hintIssues * SEVERITY_PENALTY.low),
     states: clamp(100 - stateIssues * SEVERITY_PENALTY.medium),
+    lists: clamp(100 - listIssues * SEVERITY_PENALTY.medium),
   };
 
   return { overall, screens, breakdown };

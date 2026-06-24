@@ -9,6 +9,7 @@ import { DuplicateLabelsRule } from "../../src/rules/duplicate-labels";
 import { MissingHintRule } from "../../src/rules/missing-hint";
 import { TouchableWithoutLabelRule } from "../../src/rules/touchable-without-label";
 import { MissingAccessibilityStateRule } from "../../src/rules/missing-accessibility-state";
+import { FlatListAccessibilityRule } from "../../src/rules/flatlist-accessibility";
 import type { RuleContext, AccessibilityIssue } from "../../src/types";
 import { DEFAULT_CONFIG } from "../../src/types";
 
@@ -351,5 +352,99 @@ describe("MissingAccessibilityStateRule", () => {
     );
     expect(issues[0].suggestion).toContain("accessibilityState");
     expect(issues[0].suggestion).toContain("disabled");
+  });
+});
+
+// ─── FlatListAccessibilityRule ────────────────────────────────────────────────
+
+describe("FlatListAccessibilityRule", () => {
+  const rule = new FlatListAccessibilityRule();
+
+  it("flags FlatList missing both accessibilityLabel and accessible", () => {
+    const issues = runRuleOnCode(
+      '<FlatList data={items} renderItem={() => null} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(2);
+    const ruleIds = issues.map((i) => i.ruleId);
+    expect(ruleIds).toContain("flatlist-missing-accessibility");
+  });
+
+  it("flags FlatList missing only accessibilityLabel", () => {
+    const issues = runRuleOnCode(
+      '<FlatList data={items} accessible={true} renderItem={() => null} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain("accessibilityLabel");
+  });
+
+  it("flags FlatList missing only accessible prop", () => {
+    const issues = runRuleOnCode(
+      '<FlatList data={items} accessibilityLabel="Products list" renderItem={() => null} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0].message).toContain("accessible={true}");
+  });
+
+  it("does NOT flag FlatList with both props present", () => {
+    const issues = runRuleOnCode(
+      '<FlatList data={items} accessible={true} accessibilityLabel="Products list" renderItem={() => null} />',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(0);
+  });
+
+  it("flags SectionList missing accessibility", () => {
+    const issues = runRuleOnCode(
+      '<SectionList sections={sections} renderItem={() => null} renderSectionHeader={() => null} />',
+      rule.run.bind(rule)
+    );
+    expect(issues.length).toBeGreaterThan(0);
+    expect(issues[0].message).toContain("SectionList");
+  });
+
+  it("flags ScrollView missing accessibility", () => {
+    const issues = runRuleOnCode(
+      '<ScrollView><Text>content</Text></ScrollView>',
+      rule.run.bind(rule)
+    );
+    expect(issues.length).toBeGreaterThan(0);
+    expect(issues[0].message).toContain("ScrollView");
+  });
+
+  it("does NOT flag regular View or Text components", () => {
+    const issues = runRuleOnCode(
+      '<View><Text>Hello</Text></View>',
+      rule.run.bind(rule)
+    );
+    expect(issues).toHaveLength(0);
+  });
+
+  it("suggestion includes accessibilityLabel example", () => {
+    const issues = runRuleOnCode(
+      '<FlatList data={items} renderItem={() => null} />',
+      rule.run.bind(rule)
+    );
+    const labelIssue = issues.find(i => i.message.includes("accessibilityLabel"));
+    expect(labelIssue?.suggestion).toContain("accessibilityLabel");
+  });
+
+  it("missing-label issue has medium severity", () => {
+    const issues = runRuleOnCode(
+      '<FlatList data={items} renderItem={() => null} />',
+      rule.run.bind(rule)
+    );
+    const labelIssue = issues.find(i => i.message.includes("accessibilityLabel"));
+    expect(labelIssue?.severity).toBe("medium");
+  });
+
+  it("missing-accessible issue has low severity", () => {
+    const issues = runRuleOnCode(
+      '<FlatList data={items} accessibilityLabel="List" renderItem={() => null} />',
+      rule.run.bind(rule)
+    );
+    expect(issues[0].severity).toBe("low");
   });
 });
